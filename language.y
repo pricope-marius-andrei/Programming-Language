@@ -17,8 +17,19 @@ class IdList ids;
 %token<string> ID TYPE
 %start progr
 %%
-progr: user_data_types global_variables global_functions entry_point {printf("The programme is correct!\n");}
-     ;
+progr :  entry_point {printf("The programme is correct!\n");}
+      |  sections entry_point {printf("The programme is correct!\n");}
+      ;
+
+sections : user_data_types
+         | user_data_types global_variables
+         | user_data_types global_functions
+         | user_data_types global_variables global_functions
+         | global_variables
+         | global_variables global_functions
+         | global_functions
+         ;
+
 
 user_data_types : DBGIN declarations DEND ;
 global_variables : GBGIN declarations GEND ;
@@ -34,7 +45,7 @@ decl       :  TYPE ID { if(!ids.existsVar($2)) {
                     };
 
 func_declarations : func_decl ';'
-                | func_declarations func_decl ';'
+               | func_declarations func_decl ';'
 
 func_decl : TYPE ID { if(!ids.existsVar($2)) {
                           ids.addVar($1,$2);
