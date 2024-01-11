@@ -64,8 +64,9 @@ extern int yydebug;
     END = 265,                     /* END  */
     ASSIGN = 266,                  /* ASSIGN  */
     NR = 267,                      /* NR  */
-    ID = 268,                      /* ID  */
-    TYPE = 269                     /* TYPE  */
+    CONST = 268,                   /* CONST  */
+    ID = 269,                      /* ID  */
+    TYPE = 270                     /* TYPE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -76,9 +77,9 @@ union YYSTYPE
 {
 #line 13 "language.y"
 
-     char* string;
+    char* string; 
 
-#line 82 "language.tab.h"
+#line 83 "language.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
