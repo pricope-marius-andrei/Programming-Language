@@ -10,11 +10,14 @@ struct IdInfo {
 
 class IdList {
     vector<IdInfo> vars;
+    vector<IdInfo> consts;
    
     public:
     bool existsVar(const char* s);
+    bool existsConst(const char* s);
     void addVar(const char* type, const char* name );
-    void printVars();
+    void addConst(const char* type, const char* name);
+    void printVarsAndConstants();
     ~IdList();
 };
 
