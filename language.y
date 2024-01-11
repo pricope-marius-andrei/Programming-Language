@@ -11,9 +11,10 @@ void yyerror(const char * s);
 class IdList ids;
 %}
 %union {
-     char* string;
+    char* string; 
 }
-%token DBGIN DEND GBGIN GEND GFUNCBGIN GFUNCEND BGIN END ASSIGN NR 
+%token DBGIN DEND GBGIN GEND GFUNCBGIN GFUNCEND BGIN END ASSIGN NR
+%token CONST IF ELSE FOR WHILE
 %token<string> ID TYPE
 %start progr
 %%
@@ -32,6 +33,8 @@ decl       :  TYPE ID { if(!ids.existsVar($2)) {
                           ids.addVar($1,$2);
                      }
                     };
+          | CONST TYPE ID ASSIGN NR {ids.addConst($2, $3);}
+          ;
 
 func_declarations : func_decl ';'
                 | func_declarations func_decl ';'
@@ -76,7 +79,6 @@ printf("error: %s at line:%d\n",s,yylineno);
 int main(int argc, char** argv){
      yyin=fopen(argv[1],"r");
      yyparse();
-     cout << "Variables:" <<endl;
-     ids.printVars();
+     ids.printVarsAndConstants();
     
 } 
