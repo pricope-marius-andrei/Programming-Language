@@ -11,11 +11,12 @@ void yyerror(const char * s);
 class IdList ids;
 %}
 %union {
-    char* string; 
+    char* string;
 }
 %token DBGIN DEND GBGIN GEND GFUNCBGIN GFUNCEND BGIN END ASSIGN NR
 %token CONST IF ELSE FOR WHILE
 %token<string> ID TYPE
+%type<string> NR
 %start progr
 %%
 progr: user_data_types global_variables global_functions entry_point {printf("The programme is correct!\n");}
@@ -29,10 +30,11 @@ declarations :  decl ';'
 	      |  declarations decl ';'   
 	      ;
 
-decl       :  TYPE ID { if(!ids.existsVar($2)) {
+decl : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
+          | TYPE ID { if(!ids.existsVar($2)) {
                           ids.addVar($1,$2);
                      }
-                    };
+                    }
           | CONST TYPE ID ASSIGN NR {ids.addConst($2, $3);}
           ;
 
@@ -81,4 +83,4 @@ int main(int argc, char** argv){
      yyparse();
      ids.printVarsAndConstants();
     
-} 
+}

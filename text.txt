@@ -5,6 +5,7 @@ data_begin
     string d;
     bool e;
     const int COA := 42;
+    int f[34];
 data_end  
 
 global_begin 
@@ -16,5 +17,6 @@ global_func_begin
 global_func_end 
 
 begin 
-    b:=13;  
+    b:=13; 
+    f[2]:=3; 
 end
