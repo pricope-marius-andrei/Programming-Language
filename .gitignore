@@ -31,8 +31,8 @@
 *.out
 *.app
 
-language.tab.c
-language.tab.h
-language
-lex.yy.c
-text.txt
+/language.tab.c
+/language.tab.h
+/language
+/lex.yy.c
+/text.txt
