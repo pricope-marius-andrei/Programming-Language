@@ -84,7 +84,7 @@ union YYSTYPE
 {
 #line 15 "language.y"
 
-    char* string; 
+    char* string;
 
 #line 90 "language.tab.h"
 
