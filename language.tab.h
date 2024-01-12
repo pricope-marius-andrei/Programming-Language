@@ -72,8 +72,20 @@ extern int yydebug;
     ELSE = 273,                    /* ELSE  */
     FOR = 274,                     /* FOR  */
     WHILE = 275,                   /* WHILE  */
-    ID = 276,                      /* ID  */
-    TYPE = 277                     /* TYPE  */
+    AND = 276,                     /* AND  */
+    OR = 277,                      /* OR  */
+    NOT = 278,                     /* NOT  */
+    EQUAL = 279,                   /* EQUAL  */
+    GRE = 280,                     /* GRE  */
+    LOW = 281,                     /* LOW  */
+    EGRE = 282,                    /* EGRE  */
+    ELOW = 283,                    /* ELOW  */
+    MUL = 284,                     /* MUL  */
+    DIV = 285,                     /* DIV  */
+    PLUS = 286,                    /* PLUS  */
+    MINUS = 287,                   /* MINUS  */
+    ID = 288,                      /* ID  */
+    TYPE = 289                     /* TYPE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -86,7 +98,7 @@ union YYSTYPE
 
     char* string;
 
-#line 90 "language.tab.h"
+#line 102 "language.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -102,4 +114,3 @@ int yyparse (void);
 
 
 #endif /* !YY_YY_LANGUAGE_TAB_H_INCLUDED  */
-
