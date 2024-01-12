@@ -31,6 +31,11 @@ void IdList::addConst(const char* type, const char* name) {
         consts.push_back(constant);
 }
 
+void IdList::addArray(const char* type, const char* name, string size) {
+    IdArray array = {string(type), string(name), size};
+    arrays.push_back(array);
+}
+
 void IdList::printVarsAndConstants() {
     for (const IdInfo& v : vars) {
         cout << ' ' << v.type << " " << v.name << ' ';
@@ -38,6 +43,9 @@ void IdList::printVarsAndConstants() {
 
     for (const IdInfo& c : consts) {
         cout << ' ' << c.type << " " << c.name << ' ';
+    }
+    for (const IdArray& a : arrays) {
+        cout << a.type << ' ' << a.name << "[" << a.size << "]" << endl;
     }
 }
 

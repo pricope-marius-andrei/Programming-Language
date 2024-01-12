@@ -5,7 +5,7 @@
 %}
 %option noyywrap
 %%
-"int"|"float"|"char"|"string"|"bool"|"void" {yylval.string = strdup(yytext);return TYPE;}
+"int"|"float"|"char"|"string"|"bool"|"void" {yylval.string = strdup(yytext); return TYPE;}
 "data_begin" {return DBGIN;}
 "data_end" {return DEND;}
 "global_begin" {return GBGIN;}
@@ -24,8 +24,9 @@
 "}" {return ENDCLASS;}
 [a-zA-Z][a-zA-Z0-9]* {yylval.string = strdup(yytext); return ID;}
 ":=" {return ASSIGN;}
-[0-9]+ {return NR;}
+[0-9]+ {yylval.string = strdup(yytext); return NR;}
+\[ {yylval.string = strdup(yytext); return '[';}
+\] {yylval.string = strdup(yytext); return ']';}
 [ \t] ;
 \n {yylineno++;}
 . {return yytext[0];}
-
