@@ -5,7 +5,7 @@
 %}
 %option noyywrap
 %%
-"int"|"float"|"char"|"string"|"bool" {yylval.string = strdup(yytext);return TYPE;}
+"int"|"float"|"char"|"string"|"bool"|"void" {yylval.string = strdup(yytext);return TYPE;}
 "data_begin" {return DBGIN;}
 "data_end" {return DEND;}
 "global_begin" {return GBGIN;}
@@ -19,6 +19,9 @@
 "else" {return ELSE;}
 "while" {return WHILE;}
 "for" {return FOR;}
+"class" {return CLASS;}
+"{" {return BEGINCLASS;}
+"}" {return ENDCLASS;}
 [a-zA-Z][a-zA-Z0-9]* {yylval.string = strdup(yytext); return ID;}
 ":=" {return ASSIGN;}
 [0-9]+ {return NR;}

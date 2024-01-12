@@ -1,20 +1,32 @@
-data_begin 
-    int a;
-    float q;
-    char s;
-    string d;
-    bool e;
-    const int COA := 42;
+data_begin
+
+    class complex {
+        int real;
+        int img;
+
+        void addReal(int a, int b, string c){
+            int y;
+            real := a;
+        };
+        void addImg(int a){
+            img := a;
+        };
+    };
+
+    class clasa {};
 data_end  
 
 global_begin 
     int b;
+    string c;
 global_end
 
 global_func_begin 
-    int c(); 
+    int c(int a, int b) {
+        int a;
+    }; 
 global_func_end 
 
 begin 
-    b:=13;  
+    a:=13;
 end
