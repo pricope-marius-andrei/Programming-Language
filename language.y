@@ -63,7 +63,7 @@ user_decl : CLASS ID BEGINCLASS ENDCLASS {if (!clslist.existClass($2)) {
                                    clslist.addClass($2);
                               };
                               } 
-                              members methods ENDCLASS
+                              class_lines ENDCLASS
                               {  
                                    if (!clslist.existClass($2)) {
                                         clslist.addClass($2);
@@ -71,6 +71,9 @@ user_decl : CLASS ID BEGINCLASS ENDCLASS {if (!clslist.existClass($2)) {
                               };
           ;
 
+class_lines : members;
+            | methods;
+            | members methods;
 /*
      Variables from class
 */
@@ -86,21 +89,26 @@ members : TYPE ID ';' {
         ;
 
 /*
-     Methods from class
+   Methods from class
 */
 methods : methods_decl ';'
         | methods methods_decl ';'
 
 methods_decl : TYPE ID '(' {methodSharedId = strdup($2); clslist.addMethods(sharedID,$1,$2);}
-               list_method_param ')' BEGINCLASS 
-               method_block ENDCLASS  
-               | TYPE ID '(' ')' BEGINCLASS {methodSharedId = strdup($2); clslist.addMethods(sharedID,$1,$2);} 
-               method_block ENDCLASS
-               | TYPE ID '(' ')' BEGINCLASS ENDCLASS {clslist.addMethods(sharedID,$1,$2);}
+               list_method_param ')' block; 
+               | TYPE ID '(' ')' {methodSharedId = strdup($2); clslist.addMethods(sharedID,$1,$2);}  
+               block
                ;
 
+block : content;
+      | without_content;
+     
+content : BEGINCLASS method_block ENDCLASS;
+
+without_content : BEGINCLASS ENDCLASS;
+
 list_method_param : method_param 
-            | list_method_param ','  method_param 
+            | list_method_param ',' method_param 
             ;
             
 method_param : TYPE ID {clslist.getMethods(sharedID)->addParameter(methodSharedId,$1,$2);}
