@@ -3,9 +3,50 @@
 using namespace std;
 
 
-void IdList::addVar(const char* type, const char*name) {
+void IdList::addVar(const char* type, const char*name, const char* initValue) {
     IdInfo var = {string(type), string(name)};
+
+    if (initValue != nullptr) {
+        var.value = string(initValue);
+    }
+    else {
+        if (type == "int" || type == "float")
+            var.value = "0";
+        else
+            if (type == "bool")
+                var.value = "false";
+            else
+                var.value = "";
+    }
+
     vars.push_back(var);
+}
+
+void IdList::updateVarValueNR(const char* name, const char* newValue) {
+    string strName = string(name);
+    for (IdInfo& v : vars) {
+        if (v.name == strName) {
+            v.value = string(newValue);
+            return;
+        }
+    }
+}
+
+void IdList::updateVarValueID(const char* dest, const char* source) {
+    string strDest = string(dest);
+    string strSource = string(source);
+
+    for (IdInfo& v : vars) {
+        if (v.name == strDest) {
+            for (const IdInfo& src : vars) {
+                if (src.name == strSource) {
+                    v.value = src.value;
+                    return;
+                }
+            }
+            return;
+        }
+    }
 }
 
 bool IdList::existsVar(const char* var) {
@@ -28,8 +69,9 @@ bool IdList::existsConst(const char* s) {
 
 }
 
-void IdList::addConst(const char* type, const char* name) {
+void IdList::addConst(const char* type, const char* name, const char* initValue) {
         IdInfo constant = {string(type), string(name)};
+        constant.value = string(initValue);
         consts.push_back(constant);
 }
 
@@ -76,11 +118,11 @@ void IdList::getType(const char *id)
 
 void IdList::printVarsAndConstants() {
     for (const IdInfo& v : vars) {
-        cout << ' ' << v.type << " " << v.name << ' ';
+        cout << ' ' << v.type << " " << v.name << ' ' << v.value << "; ";
     }
 
     for (const IdInfo& c : consts) {
-        cout << ' ' << c.type << " " << c.name << ' ';
+        cout << ' ' << c.type << " " << c.name << ' ' << c.value << "; ";
     }
     for (const IdArray& a : arrays) {
         cout << a.type << ' ' << a.name << "[" << a.size << "]" << endl;
