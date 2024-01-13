@@ -33,9 +33,45 @@ void IdList::addConst(const char* type, const char* name) {
         consts.push_back(constant);
 }
 
+bool IdList::existsArray(const char* s) {
+    string strconst = string(s);
+    for (const IdArray& a : arrays) {
+        if (strconst == a.name) 
+            return true;
+    }
+    return false;
+
+}
+
 void IdList::addArray(const char* type, const char* name, string size) {
     IdArray array = {string(type), string(name), size};
     arrays.push_back(array);
+}
+
+void IdList::getType(const char *id)
+{
+    for (const IdInfo& v : vars) {
+        if(v.name == string(id))
+        {
+            cout << v.name  << " has type: " << v.type << endl;
+            break;
+        }
+    }
+
+    for (const IdInfo& c : consts) {
+        if(c.name == string(id))
+        {
+            cout << c.name  << " has type: const " << c.type << endl;
+            break;
+        }
+    }
+    for (const IdArray& a : arrays) {
+        if(a.name == string(id))
+        {
+            cout << a.name  << " has type: " << a.type << "[" << a.size << "]" << endl;
+            break;
+        }
+    }
 }
 
 void IdList::printVarsAndConstants() {

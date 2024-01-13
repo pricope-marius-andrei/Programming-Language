@@ -26,6 +26,7 @@ class MethodList mthlist;
 %token DBGIN DEND GBGIN GEND GFUNCBGIN GFUNCEND BGIN END ASSIGN NR
 %token CLASS BEGINCLASS ENDCLASS
 %token CONST IF ELSE FOR WHILE
+%token TYPEOF
 %token<string> ID TYPE
 %type<string> NR
 %start progr
@@ -228,6 +229,15 @@ statement: ID var_oper {if(!ids.existsVar($1)) {
                          {
                               yyerror("The method was not declared");
                          }
+         }
+         | TYPEOF '(' ID ')' {
+               if(!ids.existsVar($3) && !ids.existsConst($3) && !ids.existsArray($3)) {
+                         yyerror("The variable was not declared");
+               }
+               else 
+               {
+                    ids.getType($3);
+               }
          }
          ;
 
