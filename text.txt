@@ -42,8 +42,15 @@ global_func_begin
 global_func_end 
 
 begin 
+    complex y;
+    complex z:= new(12);
     a:=13;
     b:=12;
+
+    int k;
+
+    string f;
+    c := 15;
 
     if (b>5) {
         if (a>=b) {
