@@ -38,6 +38,7 @@
 "}" {return ENDCLASS;}
 "TypeOf" {return TYPEOF;}
 "new" {return NEW;}
+"->" {return ACCESS_FIELD;}
 [a-zA-Z][a-zA-Z0-9]* {yylval.string = strdup(yytext); return ID;}
 ":=" {return ASSIGN;}
 [0-9]+ {yylval.string = strdup(yytext); return NR;}

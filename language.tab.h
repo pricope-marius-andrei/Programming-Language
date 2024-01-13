@@ -88,8 +88,9 @@ extern int yydebug;
     MINC = 289,                    /* MINC  */
     TYPEOF = 290,                  /* TYPEOF  */
     NEW = 291,                     /* NEW  */
-    ID = 292,                      /* ID  */
-    TYPE = 293                     /* TYPE  */
+    ACCESS_FIELD = 292,            /* ACCESS_FIELD  */
+    ID = 293,                      /* ID  */
+    TYPE = 294                     /* TYPE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -98,11 +99,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "language.y"
+#line 18 "language.y"
 
     char* string;
 
-#line 106 "language.tab.h"
+#line 107 "language.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
