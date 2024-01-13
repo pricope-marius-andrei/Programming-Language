@@ -209,22 +209,21 @@ declarations :  decl ';'
 	      |  declarations decl ';'   
 	      ;
 
-decl : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
-     | TYPE ID { if(!ids.existsVar($2)) {
-                         ids.addVar($1,$2);
+decl      : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
+          | TYPE ID ASSIGN NR {ids.addVar($1, $2, $4);}
+          | TYPE ID { if(!ids.existsVar($2)) {
+                          ids.addVar($1,$2);
+                     }
+                     else 
+                     {
+                         yyerror("The variable already exist!");    
+                     }
                     }
-                    else 
-                    {
-                    yyerror("The variable already exist!");    
-                    }
-               }
-     | CONST TYPE ID ASSIGN NR {
-          if(!ids.existsConst($2))
-               ids.addConst($2, $3);
-          else 
-               yyerror("The const variable already exist!");    
-          }
-     ;
+          | CONST TYPE ID ASSIGN NR {
+               if(!ids.existsConst($2))
+                    ids.addConst($2, $3, $5);
+               else 
+                    yyerror("The const variable already exist!");    
 /*
      Functions for global func section
 */
@@ -289,6 +288,7 @@ list :  statement ';'
      ;
 
 
+
 statement: TYPE ID { //declare new local variables
                if(ids.existsVar($2))
                     yyerror("The variable was already declared");
@@ -306,10 +306,32 @@ statement: TYPE ID { //declare new local variables
                    yyerror("The variable was not declared"); 
                }
           }
-          |ID var_oper { //assign values to variable
-               if(!ids.existsVar($1)) {
-                    yyerror("The variable was not declared");
-               }}
+          | TYPE ID ASSIGN NR {if(local_list.existsVar($2))
+                                   yyerror("The variable was already declared");
+                               else
+                                    local_list.addVar($1,$2,$4);
+                              }
+          | CONST TYPE ID ASSIGN NR {
+                                        if(!ids.existsConst($2))
+                                             ids.addConst($2, $3, $5);
+                                        else 
+                                             yyerror("The const variable already exist!");    
+                                   }
+          | ID ASSIGN ID {
+                              if (!ids.existsVar($1)) {
+                                   yyerror("The destination variable was not declared");
+                              }
+                              if (!ids.existsVar($3)) {
+                                   yyerror("The source variable was not declared");
+                              }
+                              ids.updateVarValueID($1, $3);
+                         }
+          | ID ASSIGN NR {
+                              if (!ids.existsVar($1)) {
+                                   yyerror("The variable was not declared");
+                              }
+                                   ids.updateVarValueNR($1, $3);
+                              }
          | ID func_oper { //method calls
                if(!mthlist.existMethod($1))
                {
@@ -342,11 +364,16 @@ statement: TYPE ID { //declare new local variables
           if(!clslist.existClass($1))
                yyerror("The class was not declared");
          }
+         | ID class_oper {
+          if(!clslist.existClass($1))
+               yyerror("The class was not declared");
+         }
          | if_statement
          | if_else_statement
          | while_statement
          | for_statement
          ;
+
 
 class_oper : ID {
                if(!user_var_list.existsVar($1))
@@ -370,12 +397,6 @@ class_oper : ID {
                }
           ;
 
-var_oper : ASSIGN ID {if(!ids.existsVar($2)) {
-                         yyerror("The variable was not declared");
-}}
-         | ASSIGN NR  		 
-         ;
-
 func_oper : '(' call_list ')';
         
 call_list : NR
@@ -394,6 +415,7 @@ int main(int argc, char** argv){
      yyparse();
      printf("Global variables and constants :\n");
      ids.printVarsAndConstants();
+     local_list.printVarsAndConstants();
      printf("\nClasses :\n");
      clslist.printClasses();
      printf("Global methods :\n");
