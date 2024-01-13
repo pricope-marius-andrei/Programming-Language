@@ -42,5 +42,37 @@ global_func_begin
 global_func_end 
 
 begin 
+    a:=13;
+    b:=12;
+
+    if (b>5) {
+        if (a>=b) {
+            if (5<2) {
+                if (a==b) {
+                   
+                }
+            }
+        }
+    };
+
+    if (b>5) {
+
+    }
+    else {
+
+    };
+
+    while(5<=6) {
+        if (a==b) {
+
+        }
+    };
+
+    for(int d;; a>b; d++) {
+        while (a == b) {
+
+        }
+    };
+
     TypeOf(a);
 end
