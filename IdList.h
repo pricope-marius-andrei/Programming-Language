@@ -6,8 +6,8 @@ using namespace std;
 struct IdInfo {
     string type;
     string name;
+    string value;
 };
-
 
 struct IdArray {
     string type;
@@ -25,8 +25,10 @@ class IdList {
     bool existsVar(const char* s);
     bool existsConst(const char* s);
     bool existsArray(const char* s);
-    void addVar(const char* type, const char* name );
-    void addConst(const char* type, const char* name);
+    void addVar(const char* type, const char* name, const char* initValue = nullptr);
+    void updateVarValueNR(const char* name, const char* newValu);
+    void updateVarValueID(const char* dest, const char* source);
+    void addConst(const char* type, const char* name, const char* initValue);
     void addArray(const char* type, const char* name, string size);
     void getType(const char* id);
     void printVarsAndConstants();
