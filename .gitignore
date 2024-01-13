@@ -30,9 +30,9 @@
 *.exe
 *.out
 *.app
+*.txt
 
 /language.tab.c
 /language.tab.h
 /language
 /lex.yy.c
-/text.txt
