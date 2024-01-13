@@ -44,6 +44,8 @@ global_func_end
 begin 
     complex y;
     complex z:= new(12);
+
+    y->real;
     a:=13;
     b:=12;
 
@@ -51,6 +53,8 @@ begin
 
     string f;
     c := 15;
+
+    TypeOf(z);
 
     if (b>5) {
         if (a>=b) {
