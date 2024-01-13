@@ -10,6 +10,7 @@ extern int yylineno;
 extern int yylex();
 void yyerror(const char * s);
 class IdList ids;
+class IdList local_list;
 class ClassList clslist;
 class MethodList mthlist;
 %}
@@ -28,6 +29,7 @@ class MethodList mthlist;
 %token CONST IF ELSE FOR WHILE
 %token AND OR NOT EQUAL GRE LOW EGRE ELOW MUL DIV PLUS MINUS PINC MINC
 %token TYPEOF
+%token NEW
 %token<string> ID TYPE
 %type<string> NR
 
@@ -206,21 +208,21 @@ declarations :  decl ';'
 	      ;
 
 decl : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
-          | TYPE ID { if(!ids.existsVar($2)) {
-                          ids.addVar($1,$2);
-                     }
-                     else 
-                     {
-                         yyerror("The variable already exist!");    
-                     }
+     | TYPE ID { if(!ids.existsVar($2)) {
+                         ids.addVar($1,$2);
                     }
-          | CONST TYPE ID ASSIGN NR {
-               if(!ids.existsConst($2))
-                    ids.addConst($2, $3);
-               else 
-                    yyerror("The const variable already exist!");    
+                    else 
+                    {
+                    yyerror("The variable already exist!");    
+                    }
                }
-          ;
+     | CONST TYPE ID ASSIGN NR {
+          if(!ids.existsConst($2))
+               ids.addConst($2, $3);
+          else 
+               yyerror("The const variable already exist!");    
+          }
+     ;
 /*
      Functions for global func section
 */
@@ -284,7 +286,18 @@ list :  statement ';'
      | list statement ';'
      ;
 
-statement: ID var_oper {if(!ids.existsVar($1)) {
+statement: TYPE ID {
+     if(ids.existsVar($2))
+          yyerror("The variable was already declared");
+     else 
+     {
+          if(!local_list.existsVar($2))
+               local_list.addVar($1, $2);
+          else 
+                yyerror("The variable was already declared");
+     }
+}
+          |ID var_oper {if(!ids.existsVar($1)) {
                          yyerror("The variable was not declared");
 }}
          | ID func_oper {
@@ -302,11 +315,18 @@ statement: ID var_oper {if(!ids.existsVar($1)) {
                     ids.getType($3);
                }
          }
+         | ID class_oper {
+          if(!clslist.existClass($1))
+               yyerror("The class was not declared");
+         }
          | if_statement
          | if_else_statement
          | while_statement
          | for_statement
          ;
+
+class_oper : ID 
+           | ID ASSIGN NEW '(' call_list ')';
 
 var_oper : ASSIGN ID {if(!ids.existsVar($2)) {
                          yyerror("The variable was not declared");
@@ -336,4 +356,6 @@ int main(int argc, char** argv){
      clslist.printClasses();
      printf("Global methods :\n");
      mthlist.printMethods();
+     printf("Local variables and constants :\n");
+     local_list.printVarsAndConstants();
 }
