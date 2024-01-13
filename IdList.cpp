@@ -1,5 +1,7 @@
 #include "IdList.h"
+#include <stdlib.h>
 using namespace std;
+
 
 void IdList::addVar(const char* type, const char*name) {
     IdInfo var = {string(type), string(name)};
@@ -79,6 +81,11 @@ void ClassList::addVars(const char* class_name,const char *type, const char *nam
         {
             if(!c.vars.existsVar(name))
                 c.vars.addVar(type,name);
+            else 
+            {
+                cout << "Redefine a member of class:" <<  c.name << endl;
+                exit(EXIT_FAILURE);
+            }
         }
     }
 }
@@ -91,6 +98,10 @@ void ClassList::addMethods(const char *class_name, const char *type, const char 
         {
             if(!c.methods.existMethod(name))
                 c.methods.addMethod(type,name);
+            else {
+                cout << "Redefine a method error in class:" << c.name << endl;
+                exit(EXIT_FAILURE);
+            }
         }
     }
 }
@@ -138,6 +149,11 @@ void MethodList::addParameter(const char* method_name, const char *type, const c
             if(!m.parameters.existsVar(name)) {
                 m.parameters.addVar(type,name);
             }
+            else 
+            {
+                cout << "Redefine a parameter error in method:" << m.name << endl;
+                exit(EXIT_FAILURE);
+            }
         }
     }
 }
@@ -149,6 +165,11 @@ void MethodList::addVar(const char *method_name, const char *type, const char *n
         {
             if(!m.vars.existsVar(name))
                 m.vars.addVar(type,name);
+            else 
+            {
+                cout << "Redefine a variable error in method:" << m.name << endl;
+                exit(EXIT_FAILURE);
+            }
         }
     }
 }

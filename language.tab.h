@@ -82,7 +82,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "language.y"
+#line 16 "language.y"
 
     char* string;
 
@@ -102,4 +102,3 @@ int yyparse (void);
 
 
 #endif /* !YY_YY_LANGUAGE_TAB_H_INCLUDED  */
-
