@@ -223,7 +223,9 @@ decl      : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
                if(!ids.existsConst($2))
                     ids.addConst($2, $3, $5);
                else 
-                    yyerror("The const variable already exist!");    
+                    yyerror("The const variable already exist!");   
+          }
+          ;
 /*
      Functions for global func section
 */
@@ -358,44 +360,36 @@ statement: TYPE ID { //declare new local variables
                if(ok == 1)
                     yyerror("The variable was not declared");
          }
-         | ID { //define a variable of class type
-          def_class = strdup($1);} 
-          class_oper {
-          if(!clslist.existClass($1))
-               yyerror("The class was not declared");
-         }
-         | ID class_oper {
-          if(!clslist.existClass($1))
-               yyerror("The class was not declared");
-         }
-         | if_statement
-         | if_else_statement
-         | while_statement
-         | for_statement
-         ;
 
-
-class_oper : ID {
-               if(!user_var_list.existsVar($1))
+         |ID ID {
+               if(!clslist.existClass($1))
+                    yyerror("The class was not declared");
+               if(!user_var_list.existsVar($2))
                {
-                    user_var_list.addVar(def_class,$1);
+                    user_var_list.addVar($1,$2);
                }
                else 
                {
                     yyerror("The variable was already declared");
                }
           }
-          | ID ASSIGN NEW '(' call_list ')' {
-               if(!user_var_list.existsVar($1))
+         | ID ID ASSIGN NEW '(' call_list ')' {
+               if(!clslist.existClass($1))
+                    yyerror("The class was not declared");
+               if(!user_var_list.existsVar($2))
                {
-                    user_var_list.addVar(def_class,$1);
+                    user_var_list.addVar($1,$2);
                }
                else 
                {
                     yyerror("The variable was already declared");
                }
-               }
-          ;
+         }
+         | if_statement
+         | if_else_statement
+         | while_statement
+         | for_statement
+         ;
 
 func_oper : '(' call_list ')';
         
