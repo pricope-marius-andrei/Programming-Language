@@ -16,20 +16,30 @@ data_begin
         int f(){
         };
     };
+
+    class clasa2 {
+        int f(){
+
+        };
+    };
 data_end  
 
 global_begin 
     int b;
     string c;
     int array[11];
+    const int y := 12;
 global_end
 
 global_func_begin 
     int c(int a, int b) {
         int a;
     }; 
+    int x(int a) {
+        int a;
+    };
 global_func_end 
 
 begin 
-    a:=13;
+
 end

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
+#include <stdlib.h>
 #include "IdList.h"
 extern FILE* yyin;
 extern char* yytext;
@@ -57,11 +58,19 @@ user_declarations :  user_decl ';'
 user_decl : CLASS ID BEGINCLASS ENDCLASS {if (!clslist.existClass($2)) {
                                                   clslist.addClass($2);
                                              }
+                                        else 
+                                        {
+                                             yyerror("Redefine a class error!");
+                                        }
                                         }; 
           | CLASS ID BEGINCLASS {sharedID = strdup($2); 
                                  if (!clslist.existClass($2)) {
                                    clslist.addClass($2);
-                              };
+                              }
+                              else 
+                              {
+                                   yyerror("Redefine a class error!");
+                              }
                               } 
                               class_lines ENDCLASS
                               {  
@@ -95,12 +104,12 @@ methods : methods_decl ';'
         | methods methods_decl ';'
 
 methods_decl : TYPE ID '(' {methodSharedId = strdup($2); clslist.addMethods(sharedID,$1,$2);}
-               list_method_param ')' block; 
+               list_method_param ')' m_block; 
                | TYPE ID '(' ')' {methodSharedId = strdup($2); clslist.addMethods(sharedID,$1,$2);}  
-               block
+               m_block
                ;
 
-block : content;
+m_block : content;
       | without_content;
      
 content : BEGINCLASS method_block ENDCLASS;
@@ -136,8 +145,17 @@ decl : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
           | TYPE ID { if(!ids.existsVar($2)) {
                           ids.addVar($1,$2);
                      }
+                     else 
+                     {
+                         yyerror("The variable already exist!");    
+                     }
                     }
-          | CONST TYPE ID ASSIGN NR {ids.addConst($2, $3);}
+          | CONST TYPE ID ASSIGN NR {
+               if(!ids.existsConst($2))
+                    ids.addConst($2, $3);
+               else 
+                    yyerror("The const variable already exist!");    
+               }
           ;
 /*
      Functions for global func section
@@ -152,21 +170,29 @@ func_decl :| TYPE ID '(' {
                          {
                               mthlist.addMethod($1,$2);    
                          }
+                         else 
+                         {
+                              yyerror("Redefine a method!");
+                         }
           }
-                list_param ')' BEGINCLASS func_block ENDCLASS  
-           | TYPE ID '(' ')' BEGINCLASS {methodSharedId = strdup($2);
-                         if(!mthlist.existMethod($2))
-                         {
-                              mthlist.addMethod($1,$2);    
-                         }
-                         }
-                          method_block ENDCLASS
-           | TYPE ID '(' ')' BEGINCLASS ENDCLASS {methodSharedId = strdup($2);
-                         if(!mthlist.existMethod($2))
-                         {
-                              mthlist.addMethod($1,$2);    
-                         }}
+                list_param ')' f_block;
+           | TYPE ID '(' ')' {methodSharedId = strdup($2);
+                              if(!mthlist.existMethod($2))
+                              {
+                                   mthlist.addMethod($1,$2);    
+                              }
+                              else
+                              {
+                                   yyerror("Redefine a method!");
+                              }
+                         } f_block;
            ;
+
+f_block : f_content;
+        | f_without_content;
+
+f_content : BEGINCLASS func_block ENDCLASS;
+f_without_content : BEGINCLASS ENDCLASS;
 
 list_param : param 
             | list_param ','  param 
@@ -186,6 +212,7 @@ instructions: ID ASSIGN ID
          ;
 
 entry_point : BGIN list END  
+            | BGIN END
      ;
      
 
@@ -193,10 +220,24 @@ list :  statement ';'
      | list statement ';'
      ;
 
-statement: ID ASSIGN ID
-         | ID ASSIGN NR  		 
-         | ID '(' call_list ')'
+statement: ID var_oper {if(!ids.existsVar($1)) {
+                         yyerror("The variable was not declared");
+}}
+         | ID func_oper {
+                         if(!mthlist.existMethod($1))
+                         {
+                              yyerror("The method was not declared");
+                         }
+         }
          ;
+
+var_oper : ASSIGN ID {if(!ids.existsVar($2)) {
+                         yyerror("The variable was not declared");
+}}
+         | ASSIGN NR  		 
+         ;
+
+func_oper : '(' call_list ')';
         
 call_list : NR
           | ID
@@ -205,7 +246,8 @@ call_list : NR
           ;
 %%
 void yyerror(const char * s){
-printf("error: %s at line:%d\n",s,yylineno);
+     printf("error: %s at line:%d\n",s,yylineno);
+     exit(EXIT_FAILURE);
 }
 
 int main(int argc, char** argv){
