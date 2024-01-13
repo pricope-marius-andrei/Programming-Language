@@ -22,6 +22,7 @@
 "class" {return CLASS;}
 "{" {return BEGINCLASS;}
 "}" {return ENDCLASS;}
+"TypeOf" {return TYPEOF;}
 [a-zA-Z][a-zA-Z0-9]* {yylval.string = strdup(yytext); return ID;}
 ":=" {return ASSIGN;}
 [0-9]+ {yylval.string = strdup(yytext); return NR;}

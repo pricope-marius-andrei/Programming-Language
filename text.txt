@@ -26,6 +26,7 @@ data_end
 
 global_begin 
     int b;
+    bool a;
     string c;
     int array[11];
     const int y := 12;
@@ -41,5 +42,5 @@ global_func_begin
 global_func_end 
 
 begin 
-
+    TypeOf(a);
 end

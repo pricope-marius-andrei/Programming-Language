@@ -24,9 +24,11 @@ class IdList {
     public:
     bool existsVar(const char* s);
     bool existsConst(const char* s);
+    bool existsArray(const char* s);
     void addVar(const char* type, const char* name );
     void addConst(const char* type, const char* name);
     void addArray(const char* type, const char* name, string size);
+    void getType(const char* id);
     void printVarsAndConstants();
     ~IdList();
 };

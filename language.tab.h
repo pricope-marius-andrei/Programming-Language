@@ -72,8 +72,9 @@ extern int yydebug;
     ELSE = 273,                    /* ELSE  */
     FOR = 274,                     /* FOR  */
     WHILE = 275,                   /* WHILE  */
-    ID = 276,                      /* ID  */
-    TYPE = 277                     /* TYPE  */
+    TYPEOF = 276,                  /* TYPEOF  */
+    ID = 277,                      /* ID  */
+    TYPE = 278                     /* TYPE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -86,7 +87,7 @@ union YYSTYPE
 
     char* string;
 
-#line 90 "language.tab.h"
+#line 91 "language.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
