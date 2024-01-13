@@ -31,6 +31,8 @@
 "-" {return MINUS;}
 "*" {return MUL;}
 "/" {return DIV;}
+"++" {return PINC;}
+"--" {return MINC;}
 "class" {return CLASS;}
 "{" {return BEGINCLASS;}
 "}" {return ENDCLASS;}

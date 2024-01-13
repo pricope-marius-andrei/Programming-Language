@@ -84,8 +84,10 @@ extern int yydebug;
     DIV = 285,                     /* DIV  */
     PLUS = 286,                    /* PLUS  */
     MINUS = 287,                   /* MINUS  */
-    ID = 288,                      /* ID  */
-    TYPE = 289                     /* TYPE  */
+    PINC = 288,                    /* PINC  */
+    MINC = 289,                    /* MINC  */
+    ID = 290,                      /* ID  */
+    TYPE = 291                     /* TYPE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -98,7 +100,7 @@ union YYSTYPE
 
     char* string;
 
-#line 102 "language.tab.h"
+#line 104 "language.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

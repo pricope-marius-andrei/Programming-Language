@@ -25,13 +25,14 @@ class MethodList mthlist;
 %token DBGIN DEND GBGIN GEND GFUNCBGIN GFUNCEND BGIN END ASSIGN NR
 %token CLASS BEGINCLASS ENDCLASS
 %token CONST IF ELSE FOR WHILE
-%token AND OR NOT EQUAL GRE LOW EGRE ELOW MUL DIV PLUS MINUS
+%token AND OR NOT EQUAL GRE LOW EGRE ELOW MUL DIV PLUS MINUS PINC MINC
 %token<string> ID TYPE
 %type<string> NR
 
 %start progr
 
-%left NOT AND OR
+%left NOT 
+%left AND OR
 %left GRE LOW EGRE ELOW 
 %left MUL DIV
 %left PLUS MINUS
@@ -51,8 +52,59 @@ sections : user_data_types
          | global_variables
          | global_variables global_functions
          | global_functions
+         | if_statement
+         | if_else_statement
+         | while_statement
+         | for_statement
          ;
 
+if_statement : IF '(' condition ')' block;
+
+if_else_statement : IF '(' condition ')' block ELSE block;
+
+while_statement : WHILE '(' condition ')' block;
+
+for_statement : FOR '(' for_initializer ';' condition ';' for_update')' block;
+
+for_initializer : declarations
+                | ID ASSIGN ID
+                | ID ASSIGN NR
+                ;
+
+for_update : ID PINC
+           ;
+
+condition : NR
+          | ID 
+          | ID GRE NR
+          | NR GRE ID
+          | ID GRE ID
+          | NR GRE NR
+          | ID LOW NR
+          | NR LOW ID
+          | ID LOW ID
+          | NR LOW NR
+          | ID EGRE NR
+          | NR EGRE ID
+          | ID EGRE ID
+          | NR EGRE NR
+          | ID ELOW NR
+          | NR ELOW ID
+          | ID ELOW ID
+          | NR ELOW NR
+          | ID EQUAL NR
+          | NR EQUAL ID
+          | ID EQUAL ID
+          | NR EQUAL NR
+          ;
+
+block : BEGINCLASS ENDCLASS
+      | BEGINCLASS statements ENDCLASS
+      ;
+
+statements : statement
+           | statements statement
+           ;
 
 user_data_types : DBGIN user_declarations DEND ;
 global_variables : GBGIN declarations GEND ;
@@ -186,11 +238,6 @@ instructions: ID ASSIGN ID
          | ID ASSIGN NR  		 
          | ID '(' call_list ')'
          | TYPE ID {mthlist.addVar(methodSharedId,$1,$2);}
-         | IF '(' condition ')' BEGINCLASS instructions ENDCLASS  {  }
-         | IF '(' condition ')' BEGINCLASS instructions ENDCLASS ELSE BEGINCLASS instructions ENDCLASS {  }
-         | FOR '(' instructions ';' condition ';' instructions ')' BEGINCLASS instructions ENDCLASS {  }
-         | WHILE '(' condition ')' BEGINCLASS instructions ENDCLASS {  }
-         ;
          ;
 
 entry_point : BGIN list END  
@@ -204,23 +251,10 @@ list :  statement ';'
 statement: ID ASSIGN ID
          | ID ASSIGN NR  		 
          | ID '(' call_list ')'
-         | IF '(' condition ')' statement {  }
-         | IF '(' condition ')' statement ELSE statement {  }
-         | FOR '(' statement ';' condition ';' statement ')' {   }
-         | WHILE '(' condition ')' statement {     }
-         ;
-
-condition: ID
-         | NR
-         | condition AND condition
-         | condition OR condition
-         | NOT condition
-         | '(' condition ')'
-         | ID EQUAL ID
-         | ID GRE ID
-         | ID LOW ID
-         | ID EGRE ID
-         | ID ELOW ID
+         | if_statement
+         | if_else_statement
+         | while_statement
+         | for_statement
          ;
 
 call_list : NR
