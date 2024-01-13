@@ -32,7 +32,7 @@
 *.app
 *.txt
 
-/language.tab.c
-/language.tab.h
-/language
-/lex.yy.c
+./language.tab.c
+./language.tab.h
+./language
+./lex.yy.c

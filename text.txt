@@ -42,12 +42,23 @@ global_func_begin
 global_func_end 
 
 begin 
+    complex y;
+    complex z:= new(12);
+
+    y->real;
     a:=13;
     b:=12;
     a:=b;
     int dd;
     int newNumber:=102;
     const float newConst := 1000;
+
+    int k;
+
+    string f;
+    c := 15;
+
+    TypeOf(z);
 
     if (b>5) {
         if (a>=b) {
