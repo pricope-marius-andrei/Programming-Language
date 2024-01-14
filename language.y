@@ -30,7 +30,7 @@ class MethodList mthlist;
 %token CLASS BEGINCLASS ENDCLASS
 %token CONST IF ELSE FOR WHILE
 %token AND OR NOT EQUAL GRE LOW EGRE ELOW MUL DIV PLUS MINUS PINC MINC
-%token TYPEOF
+%token TYPEOF EVAL
 %token NEW ACCESS_FIELD
 %token<string> ID TYPE
 %type <string> NR
@@ -236,6 +236,7 @@ declarations :  decl ';'
 
 decl      : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
           | TYPE ID ASSIGN NR {ids.addVar($1, $2, $4);}
+          | TYPE ID ASSIGN '"' ID '"' {ids.addVar($1, $2, $5);}
           | TYPE ID { if(!ids.existsVar($2)) {
                           ids.addVar($1,$2);
                      }
@@ -338,6 +339,11 @@ statement: TYPE ID { //declare new local variables
                                else
                                     local_list.addVar($1,$2,$4);
                               }
+          | TYPE ID ASSIGN '"' ID '"' {if(local_list.existsVar($2))
+                                   yyerror("The variable was already declared");
+                               else
+                                    local_list.addVar($1,$2,$5);
+                              }
           | CONST TYPE ID ASSIGN NR {
                                         if(!ids.existsConst($2))
                                              ids.addConst($2, $3, $5);
@@ -376,12 +382,30 @@ statement: TYPE ID { //declare new local variables
                     user_var_list.getType($3);
                }
 
-               if(ids.existsVar($3) || ids.existsConst($3) || ids.existsArray($3)) {
+               if(local_list.existsVar($3) || local_list.existsConst($3) || local_list.existsArray($3)) {
                     ok = 0;
                     local_list.getType($3);
                }
                if(ok == 1)
                     yyerror("The variable was not declared");
+         }
+         | EVAL '(' ID ')' {
+               int ok = 1;
+               if(ids.existsVar($3) || ids.existsConst($3) || ids.existsArray($3)) {
+                    ok = 0;
+                    ids.getEval($3);
+               }
+
+               if(local_list.existsVar($3) || local_list.existsConst($3) || local_list.existsArray($3)) {
+                    ok = 0;
+                    local_list.getEval($3);
+               }
+
+               if(ok == 1)
+                    yyerror("The variable was not declared");
+         }
+         | EVAL '(' expression ')' {
+               printf("Eval result: %s\n", $3);
          }
          | ID ID ASSIGN NEW ID '(' call_list ')' {
                if(!clslist.existClass($1) || !clslist.isConstructor($1,$5))

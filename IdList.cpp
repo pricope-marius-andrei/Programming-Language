@@ -116,6 +116,22 @@ void IdList::getType(const char *id)
     }
 }
 
+void IdList::getEval(const char* id) {
+    for (const IdInfo& v : vars) {
+        if (v.name == string(id)) {
+            cout << v.name << " value: " << v.value << '\n';
+        }
+    }
+
+    for (const IdInfo& c : consts) {
+        if(c.name == string(id))
+        {
+            cout << c.name  << " value: " << c.value << endl;
+            break;
+        }
+    }
+}
+
 void IdList::printVarsAndConstants() {
     for (const IdInfo& v : vars) {
         cout << ' ' << v.type << " " << v.name << ' ' << v.value << "; ";

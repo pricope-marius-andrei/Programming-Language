@@ -31,6 +31,7 @@ class IdList {
     void addConst(const char* type, const char* name, const char* initValue);
     void addArray(const char* type, const char* name, string size);
     void getType(const char* id);
+    void getEval(const char* id);
     void printVarsAndConstants();
     ~IdList();
 };
