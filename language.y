@@ -4,6 +4,7 @@
 #include <cstring>
 #include <stdlib.h>
 #include "IdList.h"
+using namespace std;
 extern FILE* yyin;
 extern char* yytext;
 extern int yylineno;
@@ -352,11 +353,17 @@ statement: TYPE ID { //declare new local variables
                                              yyerror("The const variable already exist!");    
                                    }
           | ID ASSIGN ID {
+
                               if (!ids.existsVar($1)) {
                                    yyerror("The destination variable was not declared");
                               }
                               if (!ids.existsVar($3)) {
                                    yyerror("The source variable was not declared");
+                              }
+
+                              if(ids.getType($1)!=ids.getType($3))
+                              {
+                                   yyerror("It is not the same type!");
                               }
                               ids.updateVarValueID($1, $3);
                          }
@@ -376,17 +383,17 @@ statement: TYPE ID { //declare new local variables
                int ok = 1;
                if(ids.existsVar($3) || ids.existsConst($3) || ids.existsArray($3)) {
                     ok = 0;
-                    ids.getType($3);
+                    cout << $3 << " has the type: " << ids.getType($3) << endl;
                }
 
                if(user_var_list.existsVar($3)) {
                     ok = 0;
-                    user_var_list.getType($3);
+                    cout << $3 << " has the type: " << user_var_list.getType($3) << endl;
                }
 
                if(local_list.existsVar($3) || local_list.existsConst($3) || local_list.existsArray($3)) {
                     ok = 0;
-                    local_list.getType($3);
+                    cout << $3 << " has the type: " <<  local_list.getType($3) << endl;
                }
                if(ok == 1)
                     yyerror("The variable was not declared");
@@ -431,7 +438,7 @@ func_oper : '(' {numberOfParameters = 0;} call_list {
           {
                yyerror("The number of parameters is not matched!");
           } 
-         }  ')'
+         }  ')' 
 
         
 call_list : NR {numberOfParameters +=1;}

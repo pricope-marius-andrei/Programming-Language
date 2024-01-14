@@ -55,7 +55,7 @@ begin
     p->img;
 
     a:=(6-4*2)/2;
-    b:=12;
+    b:=a;
     int dd;
     int newNumber:=102;
     const float newConst := 1000;
@@ -66,6 +66,7 @@ begin
     c := 15;
 
     TypeOf(y);
+    TypeOf(array);
 
     x(2);
     r(2,92);

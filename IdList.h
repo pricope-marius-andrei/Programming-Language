@@ -30,7 +30,7 @@ class IdList {
     void updateVarValueID(const char* dest, const char* source);
     void addConst(const char* type, const char* name, const char* initValue);
     void addArray(const char* type, const char* name, string size);
-    void getType(const char* id);
+    string getType(const char* id);
     int getTotal();
     void printVarsAndConstants();
     ~IdList();
