@@ -10,17 +10,23 @@ data_begin
         void addImg(int a){
             img := a;
         };
+
+        complex(int r, int i);
     };
 
     class clasa {
         int f(){
         };
+
+        clasa(int a);
     };
 
     class clasa2 {
         int f(){
 
         };
+        
+        clasa2(int f);
     };
 data_end  
 

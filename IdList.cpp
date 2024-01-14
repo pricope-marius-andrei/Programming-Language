@@ -184,6 +184,29 @@ void ClassList::addMethods(const char *class_name, const char *type, const char 
     }
 }
 
+void ClassList::addParamsConstructor(const char* class_name, const char *type, const char *name)
+{
+    for (Class &c : classes)
+    {
+        if(c.name == string(class_name))
+        {
+            if(!c.params_constructor.existsVar(name))
+                c.params_constructor.addVar(type,name);
+            else 
+            {
+                cout << "The parameter already defined!"<< endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+    
+}
+
+bool ClassList::isConstructor(const char* class_name, const char *id)
+{
+    return string(class_name) == string(id);
+}
+
 MethodList* ClassList::getMethods(const char* class_name)
 {
     for(Class &c : classes)
