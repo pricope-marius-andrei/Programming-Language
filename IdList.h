@@ -59,6 +59,7 @@ struct Class {
     string name;
     IdList vars;
     MethodList methods;
+    IdList params_constructor;
 };
 
 class ClassList {
@@ -69,6 +70,8 @@ class ClassList {
     void addClass(const char *s);
     void addVars(const char* class_name,const char* type, const char* name);
     void addMethods(const char* class_name, const char*type, const char* name);
+    void addParamsConstructor(const char* class_name, const char* type, const char* name);
+    bool isConstructor(const char* class_name, const char *id);
     void printClasses();
     MethodList* getMethods(const char *class_name);
     ~ClassList();
