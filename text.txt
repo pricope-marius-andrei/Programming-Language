@@ -27,7 +27,8 @@ data_end
 global_begin 
     int b:=23;
     int a;
-    string c;
+    string c:=aNDREI;
+    char ee3:=5;
     int array[11];
     const int y := 12;
 global_end
@@ -55,9 +56,7 @@ begin
 
     int k;
 
-    string f;
-    c := 15;
-
+    string f:=AS;
     TypeOf(z);
 
     if (b>5) {

@@ -211,6 +211,7 @@ declarations :  decl ';'
 
 decl      : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
           | TYPE ID ASSIGN NR {ids.addVar($1, $2, $4);}
+          | TYPE ID ASSIGN ID {ids.addVar($1, $2, $4);}
           | TYPE ID { if(!ids.existsVar($2)) {
                           ids.addVar($1,$2);
                      }
@@ -309,6 +310,11 @@ statement: TYPE ID { //declare new local variables
                }
           }
           | TYPE ID ASSIGN NR {if(local_list.existsVar($2))
+                                   yyerror("The variable was already declared");
+                               else
+                                    local_list.addVar($1,$2,$4);
+                              }
+          | TYPE ID ASSIGN ID {if(local_list.existsVar($2))
                                    yyerror("The variable was already declared");
                                else
                                     local_list.addVar($1,$2,$4);
