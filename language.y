@@ -123,7 +123,7 @@ user_declarations :  user_decl ';'
 	      |  user_declarations user_decl ';'   
 	      ;
 
-user_decl : CLASS ID BEGINCLASS ENDCLASS {if (!clslist.existClass($2)) {
+user_decl : CLASS ID BEGINCLASS constructor ENDCLASS {if (!clslist.existClass($2)) {
                                                   clslist.addClass($2);
                                              }
                                         else 
@@ -148,9 +148,35 @@ user_decl : CLASS ID BEGINCLASS ENDCLASS {if (!clslist.existClass($2)) {
                               };
           ;
 
-class_lines : members;
-            | methods;
-            | members methods;
+class_lines : members constructor;
+            | methods constructor;
+            | members methods constructor;
+
+/*
+     Constructor from the class
+*/
+
+constructor : ID {
+               if(!clslist.isConstructor(sharedID,$1))
+               {
+                    yyerror("The constructor should have same name as the class!");
+               }
+            }
+            con_params_options
+            ;
+
+
+con_params_options : con_with_params
+                   | con_without_params
+
+con_with_params : '(' con_params ')' ';'
+
+con_params : TYPE ID
+           | TYPE ID ',' con_params 
+           ;
+
+con_without_params : '(' ')' ';'
+
 /*
      Variables from class
 */
@@ -199,7 +225,8 @@ method_instructions : ID ASSIGN ID
          | ID ASSIGN NR  		 
          | ID '(' call_list ')'
          | TYPE ID {
-          clslist.getMethods(sharedID)->addVar(methodSharedId,$1,$2);}
+          clslist.getMethods(sharedID)->addVar(methodSharedId,$1,$2);
+          }
          ;
 
 /*
