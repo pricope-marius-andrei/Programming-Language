@@ -383,7 +383,6 @@ statement: TYPE ID { //declare new local variables
                if(ok == 1)
                     yyerror("The variable was not declared");
          }
-
          | ID ID ASSIGN NEW ID '(' call_list ')' {
                if(!clslist.existClass($1) || !clslist.isConstructor($1,$5))
                     yyerror("The class was not declared");
