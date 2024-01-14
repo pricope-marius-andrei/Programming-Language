@@ -90,12 +90,12 @@ void IdList::addArray(const char* type, const char* name, string size) {
     arrays.push_back(array);
 }
 
-void IdList::getType(const char *id)
+string IdList::getType(const char *id)
 {
     for (const IdInfo& v : vars) {
         if(v.name == string(id))
         {
-            cout << v.name  << " has type: " << v.type << endl;
+            return v.type;
             break;
         }
     }
@@ -103,17 +103,35 @@ void IdList::getType(const char *id)
     for (const IdInfo& c : consts) {
         if(c.name == string(id))
         {
-            cout << c.name  << " has type: const " << c.type << endl;
+            return c.type;
             break;
         }
     }
     for (const IdArray& a : arrays) {
         if(a.name == string(id))
         {
-            cout << a.name  << " has type: " << a.type << "[" << a.size << "]" << endl;
+            return a.type+"["+a.size+"]";
             break;
         }
     }
+
+    return string();
+}
+
+int IdList::getTotal()
+{
+    int total = 0;
+     for (const IdInfo& v : vars) {
+        total += 1;
+    }
+
+    for (const IdInfo& c : consts) {
+        total += 1;
+    }
+    for (const IdArray& a : arrays) {
+        total += 1;
+    }
+    return total;
 }
 
 void IdList::getEval(const char* id) {
@@ -311,6 +329,20 @@ bool MethodList::existMethod(const char *name)
         }
     }
     return false;
+}
+
+int MethodList::getNumberOfParameters(const char *func_name)
+{
+    int totalParameters = 0;
+    for(MethodsInfo& m : methods) {
+        if(m.name == string(func_name))
+        {
+            totalParameters = m.parameters.getTotal();
+            break;
+        } 
+    }
+
+    return totalParameters;
 }
 
 void MethodList::printMethods()

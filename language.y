@@ -4,6 +4,7 @@
 #include <cstring>
 #include <stdlib.h>
 #include "IdList.h"
+using namespace std;
 extern FILE* yyin;
 extern char* yytext;
 extern int yylineno;
@@ -24,6 +25,8 @@ class MethodList mthlist;
      char* sharedID = NULL;
      char* methodSharedId = NULL;
      char* def_class = NULL;
+     int numberOfParameters = 0;
+     char *currentMethod = NULL;
 %}
 
 %token DBGIN DEND GBGIN GEND GFUNCBGIN GFUNCEND BGIN END ASSIGN NR
@@ -250,8 +253,8 @@ decl      : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
                if(!ids.existsConst($2))
                     ids.addConst($2, $3, $5);
                else 
-                    yyerror("The const variable already exist!");  
-          }  
+                    yyerror("The const variable already exist!");   
+          }
           ;
 /*
      Functions for global func section
@@ -262,7 +265,7 @@ func_declarations : func_decl ';'
 
 func_decl :| TYPE ID '(' {
                          methodSharedId = strdup($2);
-                         if(!mthlist.existMethod($2))
+                         if(!mthlist.existMethod($2) && !ids.existsVar($2) && !ids.existsConst($2) && !local_list.existsVar($2) && !local_list.existsConst($2))
                          {
                               mthlist.addMethod($1,$2);    
                          }
@@ -303,7 +306,12 @@ func_block : instructions ';'
 
 instructions: ID ASSIGN ID
          | ID ASSIGN NR  		 
-         | ID '(' call_list ')'
+         | ID '(' {numberOfParameters = 0;} call_list { 
+          if(numberOfParameters != mthlist.getNumberOfParameters($1))
+          {
+               yyerror("The number of parameters is not matched!");
+          } 
+         }  ')'
          | TYPE ID {mthlist.addVar(methodSharedId,$1,$2);}
          ;
 
@@ -350,11 +358,17 @@ statement: TYPE ID { //declare new local variables
                                              yyerror("The const variable already exist!");    
                                    }
           | ID ASSIGN ID {
+
                               if (!ids.existsVar($1)) {
                                    yyerror("The destination variable was not declared");
                               }
                               if (!ids.existsVar($3)) {
                                    yyerror("The source variable was not declared");
+                              }
+
+                              if(ids.getType($1)!=ids.getType($3))
+                              {
+                                   yyerror("It is not the same type!");
                               }
                               ids.updateVarValueID($1, $3);
                          }
@@ -362,28 +376,29 @@ statement: TYPE ID { //declare new local variables
                                    yyerror("The variable was not declared");
                               }
                                    ids.updateVarValueNR($1, $3);}
-         | ID func_oper { //method calls
+         | ID{ //method calls
+               currentMethod = strdup($1);
                if(!mthlist.existMethod($1))
                {
                     yyerror("The method was not declared");
                }
-         }
+          } func_oper 
          | TYPEOF '(' ID ')' { //TypeOf function
 
                int ok = 1;
                if(ids.existsVar($3) || ids.existsConst($3) || ids.existsArray($3)) {
                     ok = 0;
-                    ids.getType($3);
+                    cout << $3 << " has the type: " << ids.getType($3) << endl;
                }
 
                if(user_var_list.existsVar($3)) {
                     ok = 0;
-                    user_var_list.getType($3);
+                    cout << $3 << " has the type: " << user_var_list.getType($3) << endl;
                }
 
                if(local_list.existsVar($3) || local_list.existsConst($3) || local_list.existsArray($3)) {
                     ok = 0;
-                    local_list.getType($3);
+                    cout << $3 << " has the type: " <<  local_list.getType($3) << endl;
                }
                if(ok == 1)
                     yyerror("The variable was not declared");
@@ -479,12 +494,18 @@ expression :	expression PLUS expression	{ $$ = &std::to_string(atoi($1) + atoi($
                                    }
           ;
 
-func_oper : '(' call_list ')';
+func_oper : '(' {numberOfParameters = 0;} call_list { 
+          if(numberOfParameters != mthlist.getNumberOfParameters(currentMethod))
+          {
+               yyerror("The number of parameters is not matched!");
+          } 
+         }  ')' 
+
         
-call_list : NR
-          | ID
-          | call_list ',' NR
-          | call_list ',' ID
+call_list : NR {numberOfParameters +=1;}
+          | ID {numberOfParameters +=1;}
+          | call_list ',' NR {numberOfParameters +=1;}
+          | call_list ',' ID {numberOfParameters +=1;}
           ;
 %%
 void yyerror(const char * s){

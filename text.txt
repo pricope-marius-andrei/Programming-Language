@@ -39,7 +39,7 @@ global_begin
 global_end
 
 global_func_begin 
-    int c(int a, int b) {
+    int r(int a, int b) {
         int a;
     }; 
     int x(int a) {
@@ -57,6 +57,8 @@ begin
     a:=(6-4*2)/2;
     b:=12;
     int dd:="andrei";
+    b:=a;
+    int dd;
     int newNumber:=102;
     const float newConst := 1000;
 
@@ -71,6 +73,10 @@ begin
     Eval(3+6>5+100);
 
     TypeOf(y);
+    TypeOf(array);
+
+    x(2);
+    r(2,92);
 
     if (b>5) {
         if (a>=b) {

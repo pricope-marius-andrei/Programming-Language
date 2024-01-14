@@ -30,9 +30,10 @@ class IdList {
     void updateVarValueID(const char* dest, const char* source);
     void addConst(const char* type, const char* name, const char* initValue);
     void addArray(const char* type, const char* name, string size);
-    void getType(const char* id);
     void getEval(const char* id);
     string getValueForID(const char* id);
+    string getType(const char* id);
+    int getTotal();
     void printVarsAndConstants();
     ~IdList();
 };
@@ -52,6 +53,7 @@ class MethodList {
     void addParameter(const char* method_name, const char* type, const char *name);
     void addVar(const char *method_name, const char* type, const char *name);
     bool existMethod(const char *name);
+    int getNumberOfParameters(const char *func_name);
     void printMethods();
     ~MethodList();
 };
