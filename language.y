@@ -33,15 +33,17 @@ class MethodList mthlist;
 %token TYPEOF
 %token NEW ACCESS_FIELD
 %token<string> ID TYPE
-%type<string> NR
+%type <string> NR
+%type <string> expression
 
 %start progr
 
-%left NOT 
 %left AND OR
 %left GRE LOW EGRE ELOW 
-%left MUL DIV
+%left NOT 
 %left PLUS MINUS
+%left MUL DIV
+%nonassoc UMINUS
 
 %left '(' ')'
 %left '{' '}'
@@ -58,10 +60,6 @@ sections : user_data_types
          | global_variables
          | global_variables global_functions
          | global_functions
-         | if_statement
-         | if_else_statement
-         | while_statement
-         | for_statement
          ;
 
 if_statement : IF '(' condition ')' block;
@@ -355,12 +353,10 @@ statement: TYPE ID { //declare new local variables
                               }
                               ids.updateVarValueID($1, $3);
                          }
-          | ID ASSIGN NR {
-                              if (!ids.existsVar($1)) {
+          | ID ASSIGN expression { if (!ids.existsVar($1)) {
                                    yyerror("The variable was not declared");
                               }
-                                   ids.updateVarValueNR($1, $3);
-                              }
+                                   ids.updateVarValueNR($1, $3);}
          | ID func_oper { //method calls
                if(!mthlist.existMethod($1))
                {
@@ -387,23 +383,10 @@ statement: TYPE ID { //declare new local variables
                if(ok == 1)
                     yyerror("The variable was not declared");
          }
-
-         |ID ID {
-               if(!clslist.existClass($1))
+         | ID ID ASSIGN NEW ID '(' call_list ')' {
+               if(!clslist.existClass($1) || !clslist.isConstructor($1,$5))
                     yyerror("The class was not declared");
-               if(!user_var_list.existsVar($2))
-               {
-                    user_var_list.addVar($1,$2);
-               }
-               else 
-               {
-                    yyerror("The variable was already declared");
-               }
-          }
-         | ID ID ASSIGN NEW '(' call_list ')' {
-               if(!clslist.existClass($1))
-                    yyerror("The class was not declared");
-               if(!user_var_list.existsVar($2))
+               if(!user_var_list.existsVar($2) && !ids.existsVar($2) && !ids.existsConst($2) && !local_list.existsVar($2) && !local_list.existsConst($2))
                {
                     user_var_list.addVar($1,$2);
                }
@@ -417,6 +400,23 @@ statement: TYPE ID { //declare new local variables
          | while_statement
          | for_statement
          ;
+
+expression :	expression PLUS expression	{ $$ = &std::to_string(atoi($1) + atoi($3))[0];
+						}
+          | expression MINUS expression { $$ = &std::to_string(atoi($1) - atoi($3))[0];}
+          | expression MUL expression { $$ = &std::to_string(atoi($1) * atoi($3))[0];}
+          | expression DIV expression	{ if ($3 == 0)
+							yyerror ("divide by zero");
+						else
+							$$ = &std::to_string(atoi($1) / atoi($3))[0];
+						}
+          |	'-' expression %prec UMINUS	{ $$ = &std::to_string(-atoi($2))[0];
+						}
+          |	'(' expression ')'		{ $$ = strdup($2);
+						}
+          |	NR				{ $$ = strdup($1); 
+                                   }
+          ;
 
 func_oper : '(' call_list ')';
         
@@ -437,11 +437,11 @@ int main(int argc, char** argv){
      printf("Global variables and constants :\n");
      ids.printVarsAndConstants();
      local_list.printVarsAndConstants();
-     printf("\nClasses :\n");
+     printf("\n\nClasses :\n\n");
      clslist.printClasses();
-     printf("Global methods :\n");
+     printf("\nGlobal methods :\n");
      mthlist.printMethods();
-     printf("Local variables and constants :\n");
+     printf("\nLocal variables and constants :\n");
      local_list.printVarsAndConstants();
      user_var_list.printVarsAndConstants();
 }

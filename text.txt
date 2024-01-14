@@ -47,14 +47,15 @@ global_func_begin
     };
 global_func_end 
 
-begin 
-    complex y;
-    complex z:= new(12);
 
-    y->real;
-    a:=13;
+begin 
+    complex p:= new complex(12,14);
+    complex z:= new complex(1,2);
+    p->real;
+    p->img;
+
+    a:=(6-4*2)/2;
     b:=12;
-    a:=b;
     int dd;
     int newNumber:=102;
     const float newConst := 1000;
@@ -64,7 +65,7 @@ begin
     string f;
     c := 15;
 
-    TypeOf(z);
+    TypeOf(y);
 
     if (b>5) {
         if (a>=b) {
