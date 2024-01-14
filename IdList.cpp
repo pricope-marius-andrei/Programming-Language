@@ -134,6 +134,33 @@ int IdList::getTotal()
     return total;
 }
 
+void IdList::getEval(const char* id) {
+    for (const IdInfo& v : vars) {
+        if (v.name == string(id)) {
+            cout << v.name << " value: " << v.value << '\n';
+        }
+    }
+
+    for (const IdInfo& c : consts) {
+        if(c.name == string(id))
+        {
+            cout << c.name  << " value: " << c.value << endl;
+            break;
+        }
+    }
+}
+
+string IdList::getValueForID(const char* id) {
+    string strId = string(id);
+
+    for (const IdInfo& v : vars) {
+        if (v.name == strId) {
+            return v.value;
+        }
+    }
+    return string();
+}
+
 void IdList::printVarsAndConstants() {
     for (const IdInfo& v : vars) {
         cout << ' ' << v.type << " " << v.name << ' ' << v.value << "; ";

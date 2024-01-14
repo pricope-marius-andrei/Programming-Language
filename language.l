@@ -37,6 +37,7 @@
 "{" {return BEGINCLASS;}
 "}" {return ENDCLASS;}
 "TypeOf" {return TYPEOF;}
+"Eval" {return EVAL;}
 "new" {return NEW;}
 "->" {return ACCESS_FIELD;}
 [a-zA-Z][a-zA-Z0-9]* {yylval.string = strdup(yytext); return ID;}

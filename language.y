@@ -33,11 +33,12 @@ class MethodList mthlist;
 %token CLASS BEGINCLASS ENDCLASS
 %token CONST IF ELSE FOR WHILE
 %token AND OR NOT EQUAL GRE LOW EGRE ELOW MUL DIV PLUS MINUS PINC MINC
-%token TYPEOF
+%token TYPEOF EVAL
 %token NEW ACCESS_FIELD
 %token<string> ID TYPE
 %type <string> NR
 %type <string> expression
+%type <string> booleanExpression
 
 %start progr
 
@@ -239,6 +240,7 @@ declarations :  decl ';'
 
 decl      : TYPE ID '[' NR ']' { ids.addArray($1, $2, $4); }
           | TYPE ID ASSIGN NR {ids.addVar($1, $2, $4);}
+          | TYPE ID ASSIGN '"' ID '"' {ids.addVar($1, $2, $5);}
           | TYPE ID { if(!ids.existsVar($2)) {
                           ids.addVar($1,$2);
                      }
@@ -322,8 +324,6 @@ list :  statement ';'
      | list statement ';'
      ;
 
-
-
 statement: TYPE ID { //declare new local variables
                if(ids.existsVar($2))
                     yyerror("The variable was already declared");
@@ -345,6 +345,11 @@ statement: TYPE ID { //declare new local variables
                                    yyerror("The variable was already declared");
                                else
                                     local_list.addVar($1,$2,$4);
+                              }
+          | TYPE ID ASSIGN '"' ID '"' {if(local_list.existsVar($2))
+                                   yyerror("The variable was already declared");
+                               else
+                                    local_list.addVar($1,$2,$5);
                               }
           | CONST TYPE ID ASSIGN NR {
                                         if(!ids.existsConst($2))
@@ -398,6 +403,41 @@ statement: TYPE ID { //declare new local variables
                if(ok == 1)
                     yyerror("The variable was not declared");
          }
+         | EVAL '(' ID ')' {
+               int ok = 1;
+               if(ids.existsVar($3) || ids.existsConst($3) || ids.existsArray($3)) {
+                    ok = 0;
+                    ids.getEval($3);
+               }
+
+               if(local_list.existsVar($3) || local_list.existsConst($3) || local_list.existsArray($3)) {
+                    ok = 0;
+                    local_list.getEval($3);
+               }
+
+               if(ok == 1)
+                    yyerror("The variable was not declared");
+         }
+         | EVAL '(' expression ')' {
+               printf("Eval result: %s\n", $3);
+         }
+         | EVAL '(' booleanExpression ')' {
+               printf("Eval result: %s\n", $3);
+         }
+         /*| EVAL '(' booleanExpressionID ')' {
+               int ok = 1;
+               if(ids.existsVar($3) || ids.existsConst($3) || ids.existsArray($3)) {
+                    ok = 0;
+               }
+
+               if(local_list.existsVar($3) || local_list.existsConst($3) || local_list.existsArray($3)) {
+                    ok = 0;
+               }
+
+               if(ok == 1)
+                    yyerror("The variable was not declared");
+               printf("Eval result: %s\n", $4);
+         }*/
          | ID ID ASSIGN NEW ID '(' call_list ')' {
                if(!clslist.existClass($1) || !clslist.isConstructor($1,$5))
                     yyerror("The class was not declared");
@@ -415,6 +455,27 @@ statement: TYPE ID { //declare new local variables
          | while_statement
          | for_statement
          ;
+
+booleanExpression :  expression GRE expression {
+                     $$ = (atoi($1) > atoi($3)) ? strdup("true") : strdup("false");
+                 }
+                 | expression LOW expression {
+                     $$ = (atoi($1) < atoi($3)) ? strdup("true") : strdup("false");
+                 }
+                 | expression EGRE expression {
+                     $$ = (atoi($1) >= atoi($3)) ? strdup("true") : strdup("false");
+                 }
+                 | expression ELOW expression {
+                     $$ = (atoi($1) <= atoi($3)) ? strdup("true") : strdup("false");
+                 }
+                 | expression EQUAL expression {
+                     $$ = (atoi($1) == atoi($3)) ? strdup("true") : strdup("false");
+                 }
+                 ;
+
+/*booleanExpressionID : ID {
+                    $$ = getValueForID($1);
+               }*/
 
 expression :	expression PLUS expression	{ $$ = &std::to_string(atoi($1) + atoi($3))[0];
 						}
