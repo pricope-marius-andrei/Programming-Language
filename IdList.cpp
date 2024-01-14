@@ -116,6 +116,22 @@ void IdList::getType(const char *id)
     }
 }
 
+int IdList::getTotal()
+{
+    int total = 0;
+     for (const IdInfo& v : vars) {
+        total += 1;
+    }
+
+    for (const IdInfo& c : consts) {
+        total += 1;
+    }
+    for (const IdArray& a : arrays) {
+        total += 1;
+    }
+    return total;
+}
+
 void IdList::printVarsAndConstants() {
     for (const IdInfo& v : vars) {
         cout << ' ' << v.type << " " << v.name << ' ' << v.value << "; ";
@@ -284,6 +300,20 @@ bool MethodList::existMethod(const char *name)
         }
     }
     return false;
+}
+
+int MethodList::getNumberOfParameters(const char *func_name)
+{
+    int totalParameters = 0;
+    for(MethodsInfo& m : methods) {
+        if(m.name == string(func_name))
+        {
+            totalParameters = m.parameters.getTotal();
+            break;
+        } 
+    }
+
+    return totalParameters;
 }
 
 void MethodList::printMethods()
